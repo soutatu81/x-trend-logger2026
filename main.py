@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import requests
 
-# 安定しているYahoo!リアルタイム検索のトレンドページに変更
 URL = "https://search.yahoo.co.jp/realtime"
 
 
@@ -23,19 +22,43 @@ def get_trends():
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     trends = []
 
-    # ページ内からリンクやテキストを広く取得
+    # 無視したいメニューや定型文のリスト（ノイズカット用）
+    ignore_words = {
+        "プライバシーポリシー",
+        "プライバシーセンター",
+        "利用規約",
+        "広告について",
+        "検索サービス一覧",
+        "ログイン",
+        "ID新規取得",
+        "ヘルプ",
+        "ご意見",
+        "フィードバック",
+        "北海道",
+        "東北",
+        "関東",
+        "中部",
+        "近畿",
+        "中国",
+        "四国",
+        "九州",
+        "全国の運行情報（Yahoo!路線情報）",
+    }
+
     for a in soup.select("a"):
       text = a.get_text(strip=True)
-      if 2 <= len(text) <= 25 and not text.startswith("http"):
-        if text not in [t["keyword"] for t in trends]:
-          trends.append({"datetime": now, "keyword": text})
+      # 文字数が2〜20文字程度で、URLやノイズワードに含まれないものだけを抽出
+      if 2 <= len(text) <= 20 and not text.startswith("http"):
+        if text not in ignore_words and not text.startswith("エラー"):
+          if text not in [t["keyword"] for t in trends]:
+            trends.append({"datetime": now, "keyword": text})
 
     if not trends:
       trends.append(
           {"datetime": now, "keyword": "トレンド取得件数0件（構造確認要）"}
       )
 
-    return trends[:50]
+    return trends[:30]  # 上位30件に絞る
   except Exception as e:
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     return [{"datetime": now, "keyword": f"エラー: {str(e)}"}]
