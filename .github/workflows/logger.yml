@@ -25,12 +25,8 @@ jobs:
       - name: Pythonスクリプトの実行
         run: python main.py
 
-      - name: 取得したデータをGitHubに保存 (Commit & Push)
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "github-actions"
-          git fetch origin main
-          git rebase origin/main
-          git add trend_log.csv
-          git commit -m "Auto update trend log [skip ci]" || echo "No changes to commit"
-          git push origin main
+      - name: 変更を自動コミットしてプッシュ
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Auto update trend log [skip ci]"
+          file_pattern: "trend_log.csv"
