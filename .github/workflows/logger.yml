@@ -5,6 +5,10 @@ on:
     - cron: '0 * * * *'
   workflow_dispatch:
 
+# 💡 ここでGitHub Actionsに書き込み権限を与える
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
