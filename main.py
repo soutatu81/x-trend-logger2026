@@ -4,7 +4,8 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import requests
 
-URL = "https://twitrend.jp/"
+# 安定しているYahoo!リアルタイム検索のトレンドページに変更
+URL = "https://search.yahoo.co.jp/realtime"
 
 
 def get_trends():
@@ -22,6 +23,7 @@ def get_trends():
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     trends = []
 
+    # ページ内からリンクやテキストを広く取得
     for a in soup.select("a"):
       text = a.get_text(strip=True)
       if 2 <= len(text) <= 25 and not text.startswith("http"):
